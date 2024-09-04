@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense/Income Tracker</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #F5F5F5;
+            color: #2C3E50;
+            margin: 0;
+            padding: 0;
+        }
+
+        .tracker-section {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            margin: 40px auto;
+            border: 1px solid #E0E0E0;
+        }
+
+        .container {
+            padding: 0 20px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        h2 {
+            color: #2C3E50;
+            font-size: 28px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            border-bottom: 2px solid #2C3E50;
+            padding-bottom: 10px;
+        }
+
+        .tracker {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            color: #2C3E50;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        input, select {
+            padding: 12px;
+            border: 1px solid #B0BEC5;
+            border-radius: 8px;
+            font-size: 16px;
+            width: 100%;
+            box-sizing: border-box;
+            background-color: #FAFAFA;
+        }
+
+        button {
+            background-color: #2C3E50;
+            color: #ffffff;
+            border: 1px solid #2C3E50;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #1A242F;
+        }
+
+        .entries {
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th, table td {
+            padding: 12px;
+            border: 1px solid #E0E0E0;
+            text-align: center;
+        }
+
+        table th {
+            background-color: #2C3E50;
+            color: #ffffff;
+        }
+
+        table td {
+            background-color: #ffffff;
+            color: #2C3E50;
+        }
+
+        .summary {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary div {
+            flex: 1;
+            margin-right: 20px;
+        }
+
+        .summary div:last-child {
+            margin-right: 0;
+        }
+
+        .notification {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #28A745;
+            color: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .notification.error {
+            background-color: #FF5733;
+        }
+
+        .remove-btn, .edit-btn {
+            background-color: #FF5733;
+            color: #ffffff;
+            border: 1px solid #FF5733;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .edit-btn {
+            background-color: #28A745;
+            border: 1px solid #28A745;
+        }
+
+        .edit-btn:hover {
+            background-color: #1E8E3E;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .modal-header, .modal-body, .modal-footer {
+            margin-bottom: 10px;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+        }
+
+        .modal-footer button {
+            margin-right: 10px;
+        }
+
+        .modal-footer button:last-child {
+            margin-right: 0;
+        }
+    </style>
+</head>
+<body>
+    <section id="tracker" class="tracker-section">
+        <div class="container">
+            <h2 class="text-center">Expense/Income Tracker</h2>
+            <div class="tracker">
+                <div class="form-group">
+                    <label for="type">Type:</label>
+                    <select id="type">
+                        <option value="expense">Expense</option>
+                        <option value="income">Income</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="category">Category:</label>
+                    <input type="text" id="category" placeholder="Enter category" />
+                </div>
+                <div class="form-group">
+                    <label for="amount">Amount:</label>
+                    <input type="number" id="amount" placeholder="Enter amount" />
+                </div>
+                <button id="add-btn">Add Entry</button>
+                <button id="download-btn">Download Data</button>
+                <div id="entries" class="entries">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Category</th>
+                                <th>Amount</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Entries will be populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="summary" class="summary">
+                    <div>
+                        <h3>Total Expenses</h3>
+                        <p id="total-expenses">0.00</p>
+                    </div>
+                    <div>
+                        <h3>Total Income</h3>
+                        <p id="total-income">0.00</p>
+                    </div>
+                    <div>
+                        <h3>Current Balance</h3>
+                        <p id="current-balance">0.00</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="notification" class="notification"></div>
+
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Entry</h2>
+                <button id="close-modal-btn">Close</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="edit-type">Type:</label>
+                    <select id="edit-type">
+                        <option value="expense">Expense</option>
+                        <option value="income">Income</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-category">Category:</label>
+                    <input type="text" id="edit-category" placeholder="Enter category" />
+                </div>
+                <div class="form-group">
+                    <label for="edit-amount">Amount:</label>
+                    <input type="number" id="edit-amount" placeholder="Enter amount" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="save-edit-btn">Save Changes</button>
+                <button id="cancel-edit-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let data = {
+            labels: [],
+            expenses: [],
+            incomes: []
+        };
+
+        let currentEditIndex = -1;
+
+        function addEntry() {
+            const type = document.getElementById('type').value;
+            const category = document.getElementById('category').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+
+            if (category && !isNaN(amount)) {
+                if (currentEditIndex !== -1) {
+                    data.labels[currentEditIndex] = category;
+                    if (type === 'expense') {
+                        data.expenses[currentEditIndex] = amount;
+                        data.incomes[currentEditIndex] = 0;
+                    } else {
+                        data.expenses[currentEditIndex] = 0;
+                        data.incomes[currentEditIndex] = amount;
+                    }
+                    currentEditIndex = -1;
+                } else {
+                    data.labels.push(category);
+                    if (type === 'expense') {
+                        data.expenses.push(amount);
+                        data.incomes.push(0);
+                    } else {
+                        data.expenses.push(0);
+                        data.incomes.push(amount);
+                    }
+                }
+
+                saveToLocalStorage();
+                updateTable();
+                updateSummary();
+                showNotification(currentEditIndex !== -1 ? 'Entry updated successfully!' : 'Entry added successfully!');
+            } else {
+                showNotification('Please enter valid category and amount.', true);
+            }
+        }
+
+        function removeEntry(button) {
+            const row = button.closest('tr');
+            const index = Array.from(row.parentNode.children).indexOf(row);
+
+            data.labels.splice(index, 1);
+            data.expenses.splice(index, 1);
+            data.incomes.splice(index, 1);
+
+            saveToLocalStorage();
+            updateTable();
+            updateSummary();
+            showNotification('Entry removed successfully!');
+        }
+
+        function editEntry(button) {
+            const row = button.closest('tr');
+            currentEditIndex = Array.from(row.parentNode.children).indexOf(row);
+
+            document.getElementById('edit-type').value = data.expenses[currentEditIndex] > 0 ? 'expense' : 'income';
+            document.getElementById('edit-category').value = data.labels[currentEditIndex];
+            document.getElementById('edit-amount').value = data.expenses[currentEditIndex] > 0 ? data.expenses[currentEditIndex] : data.incomes[currentEditIndex];
+
+            document.getElementById('edit-modal').style.display = 'flex';
+        }
+
+        function saveEdit() {
+            addEntry();
+            document.getElementById('edit-modal').style.display = 'none';
+        }
+
+        function updateTable() {
+            const tableBody = document.querySelector('#entries tbody');
+            tableBody.innerHTML = '';
+
+            data.labels.forEach((category, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${data.expenses[index] > 0 ? 'Expense' : 'Income'}</td>
+                    <td>${category}</td>
+                    <td>${data.expenses[index] > 0 ? data.expenses[index].toFixed(2) : data.incomes[index].toFixed(2)}</td>
+                    <td>
+                        <button class="edit-btn" onclick="editEntry(this)">Edit</button>
+                        <button class="remove-btn" onclick="removeEntry(this)">Remove</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function updateSummary() {
+            const totalExpenses = data.expenses.reduce((total, amount) => total + amount, 0).toFixed(2);
+            const totalIncome = data.incomes.reduce((total, amount) => total + amount, 0).toFixed(2);
+            const currentBalance = (totalIncome - totalExpenses).toFixed(2);
+
+            document.getElementById('total-expenses').textContent = totalExpenses;
+            document.getElementById('total-income').textContent = totalIncome;
+            document.getElementById('current-balance').textContent = currentBalance;
+        }
+
+        function showNotification(message, isError = false) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${isError ? 'error' : ''}`;
+            notification.style.display = 'block';
+
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('entries', JSON.stringify({
+                labels: data.labels,
+                expenses: data.expenses,
+                incomes: data.incomes
+            }));
+        }
+
+        function loadFromLocalStorage() {
+            const storedData = JSON.parse(localStorage.getItem('entries'));
+            if (storedData) {
+                data.labels = storedData.labels || [];
+                data.expenses = storedData.expenses || [];
+                data.incomes = storedData.incomes || [];
+
+                updateTable();
+                updateSummary();
+            }
+        }
+
+        document.getElementById('add-btn').addEventListener('click', addEntry);
+
+        document.getElementById('download-btn').addEventListener('click', () => {
+            const csvContent = "data:text/csv;charset=utf-8,"
+                + data.labels.map((category, index) => `${category},${data.expenses[index]},${data.incomes[index]}`).join("\n");
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "expenses_income_data.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        document.getElementById('save-edit-btn').addEventListener('click', saveEdit);
+
+        document.getElementById('close-modal-btn').addEventListener('click', () => {
+            document.getElementById('edit-modal').style.display = 'none';
+        });
+
+        document.getElementById('cancel-edit-btn').addEventListener('click', () => {
+            document.getElementById('edit-modal').style.display = 'none';
+        });
+
+        loadFromLocalStorage();
+    </script>
+</body>
+</html>

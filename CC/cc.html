@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Converter</title>
+    <style>
+        /* styles.css */
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #F5F5F5; /* Light gray background */
+            margin: 0;
+            padding: 0;
+        }
+
+        .currency-converter-section {
+            background-color: #ffffff; /* White background for the converter section */
+            padding: 40px;
+            border-radius: 12px; /* More rounded corners */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 40px auto;
+            border: 1px solid #E0E0E0; /* Light gray border */
+        }
+
+        .container {
+            padding: 0 20px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        h2 {
+            color: #003366; /* Heavy blue color */
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .converter {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            color: #003366; /* Heavy blue color */
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        input, select {
+            padding: 12px;
+            border: 1px solid #B0BEC5; /* Slightly darker gray border */
+            border-radius: 8px; /* Rounded corners */
+            font-size: 16px;
+            width: 100%; /* Full width for better layout */
+            box-sizing: border-box; /* Ensure padding is included in width */
+        }
+
+        button {
+            background-color: #003366; /* Heavy blue background */
+            color: #ffffff;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            width: 100%; /* Full width button */
+        }
+
+        button:hover {
+            background-color: #002244; /* Darker blue on hover */
+            transform: scale(1.05); /* Slight scaling effect */
+        }
+
+        #result {
+            font-size: 20px;
+            font-weight: bold;
+            color: #003366; /* Heavy blue color */
+            text-align: center;
+        }
+
+        .form-group select {
+            appearance: none; /* Remove default styling for select */
+            background: #ffffff url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"%3E%3Cpath d="M7 10l5 5 5-5z" fill="%23003366"/%3E%3C/svg%3E') no-repeat right 10px center;
+            background-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <section id="currency-converter" class="currency-converter-section">
+        <div class="container">
+            <h2 class="text-center">Currency Converter</h2>
+            <div class="converter">
+                <div class="form-group">
+                    <label for="amount">Amount:</label>
+                    <input type="number" id="amount" placeholder="Enter amount" />
+                </div>
+                <div class="form-group">
+                    <label for="from-currency">From:</label>
+                    <select id="from-currency">
+                        <!-- Currency options will be populated dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="to-currency">To:</label>
+                    <select id="to-currency">
+                        <!-- Currency options will be populated dynamically -->
+                    </select>
+                </div>
+                <button id="convert-btn">Convert</button>
+                <div id="result">
+                    <p id="converted-amount">Converted Amount: <span id="converted-value">0</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        // script.js
+
+        const API_KEY = '286e8ec3c7f1036b99d18544'; // Your API key
+        const API_URL = `https://v6.exchangerate-api.com/v6/${API_KEY}/latest/USD`;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const amountInput = document.getElementById('amount');
+            const fromCurrencySelect = document.getElementById('from-currency');
+            const toCurrencySelect = document.getElementById('to-currency');
+            const convertButton = document.getElementById('convert-btn');
+            const convertedValueSpan = document.getElementById('converted-value');
+
+            let currencies = {};
+
+            // Fetch and populate currencies
+            function fetchCurrencies() {
+                fetch(API_URL)
+                    .then(response => response.json())
+                    .then(data => {
+                        currencies = data.conversion_rates;
+                        populateCurrencyOptions();
+                    })
+                    .catch(error => console.error('Error fetching currency data:', error));
+            }
+
+            function populateCurrencyOptions() {
+                const currencyCodes = Object.keys(currencies);
+
+                currencyCodes.forEach(code => {
+                    const option = document.createElement('option');
+                    option.value = code;
+                    option.textContent = code;
+                    fromCurrencySelect.appendChild(option);
+                    toCurrencySelect.appendChild(option.cloneNode(true));
+                });
+
+                fromCurrencySelect.value = 'USD';
+                toCurrencySelect.value = 'EUR';
+            }
+
+            function convertCurrency() {
+                const amount = parseFloat(amountInput.value);
+                const fromCurrency = fromCurrencySelect.value;
+                const toCurrency = toCurrencySelect.value;
+
+                if (isNaN(amount) || !currencies[fromCurrency] || !currencies[toCurrency]) {
+                    alert('Please enter a valid amount and select currencies.');
+                    return;
+                }
+
+                const rateFromUSD = currencies[fromCurrency];
+                const rateToUSD = currencies[toCurrency];
+                const convertedAmount = ((amount / rateFromUSD) * rateToUSD).toFixed(2);
+                convertedValueSpan.textContent = `${convertedAmount} ${toCurrency}`;
+            }
+
+            convertButton.addEventListener('click', convertCurrency);
+
+            fetchCurrencies();
+        });
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Dashboard</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="dashboard.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Financial Dashboard</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="#form"><i class="fas fa-file-alt"></i> Form</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#report"><i class="fas fa-chart-line"></i> Report</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="fas fa-user-cog"></i> Developer</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+
+    <!-- Form Section -->
+    <section id="form" class="py-5">
+        <div class="container">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4><i class="fas fa-user"></i> User Financial Information</h4>
+                </div>
+                <div class="card-body">
+                    <form id="financialForm">
+                        <div class="form-group">
+                            <label for="username"><i class="fas fa-user"></i> Username</label>
+                            <input type="text" id="username" class="form-control" placeholder="Enter your username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="monthlyIncome"><i class="fas fa-wallet"></i> Monthly Income</label>
+                            <input type="number" id="monthlyIncome" class="form-control" placeholder="Enter your monthly income" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="expenses"><i class="fas fa-credit-card"></i> Expenses</label>
+                            <input type="number" id="expenses" class="form-control" placeholder="Enter your monthly expenses" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="currentSavings"><i class="fas fa-piggy-bank"></i> Current Savings</label>
+                            <input type="number" id="currentSavings" class="form-control" placeholder="Enter your current savings" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="financialGoal"><i class="fas fa-bullseye"></i> Financial Goal</label>
+                            <input type="number" id="financialGoal" class="form-control" placeholder="Enter your financial goal" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="currentDebt"><i class="fas fa-credit-card"></i> Current Debt</label>
+                            <input type="number" id="currentDebt" class="form-control" placeholder="Enter your current debt" required>
+                        </div>
+                        <button type="button" class="btn btn-primary" id="generateDashboardBtn"><i class="fas fa-save"></i> Generate Dashboard</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard" class="py-5 hidden">
+        <div class="container">
+            <!-- Header -->
+            <div class="header mb-4">
+                <h2 class="text-center">Welcome, <span id="userName"></span>! Here is your financial dashboard.</h2>
+            </div>
+            <!-- Dashboard Content -->
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <canvas id="incomeVsExpenseChart"></canvas>
+                            <p class="text-center mt-3">Income vs Expense</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <canvas id="annualIncomeChart"></canvas>
+                            <p class="text-center mt-3">Annual Income</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <canvas id="taxAnalysisChart"></canvas>
+                            <p class="text-center mt-3">Tax Analysis</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <canvas id="incomeVsDebtChart"></canvas>
+                            <p class="text-center mt-3">Income vs Debt</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <canvas id="savingsVsGoalChart"></canvas>
+                            <p class="text-center mt-3">Savings vs Goal</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <canvas id="dailyEarningChart"></canvas>
+                            <p class="text-center mt-3">Daily Earning</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <canvas id="expensesBreakdownChart"></canvas>
+                            <p class="text-center mt-3">Expenses Breakdown</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <canvas id="spendingComparisonChart"></canvas>
+                            <p class="text-center mt-3">Spending Comparison</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Report Section -->
+<section id="report" class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">Comprehensive Financial Report</h2>
+
+        <!-- Savings Projection Calculator -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header">
+                <h4>Savings Projection Calculator</h4>
+            </div>
+            <div class="card-body">
+                <p class="text-center mt-3">Projected Savings: ₹<span id="projectedSavings"></span></p>
+            </div>
+        </div>
+
+        <!-- Debt Repayment Plan -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header">
+                <h4>Debt Repayment Plan</h4>
+            </div>
+            <div class="card-body">
+                <p class="text-center mt-3">Current Debt: ₹<span id="currentDebtDisplay"></span></p>
+                <!-- Additional details can be added here -->
+            </div>
+        </div>
+
+        <!-- Current Net Worth -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header">
+                <h4>Current Net Worth</h4>
+            </div>
+            <div class="card-body">
+                <h5 class="text-center"><span id="netWorthValue"></span></h5>
+                <p class="text-center mt-3">Net Worth Over Time</p>
+            </div>
+        </div>
+
+        <!-- Income, Expense, Savings, Debt, and Goal Efficiency -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header">
+                <h4>Income, Expense, Savings, Debt, and Goal Efficiency</h4>
+            </div>
+            <div class="card-body">
+                <p class="text-center mt-3">Your Financial Efficiency</p>
+                <ul>
+                    <li><strong>Income:</strong> ₹<span id="reportIncome"></span></li>
+                    <li><strong>Expenses:</strong> ₹<span id="reportExpenses"></span></li>
+                    <li><strong>Savings:</strong> ₹<span id="reportSavings"></span></li>
+                    <li><strong>Debt:</strong> ₹<span id="reportDebt"></span></li>
+                    <li><strong>Goal Efficiency:</strong> <span id="goalEfficiency"></span>%</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Download Report Button -->
+        <div class="text-center mt-4">
+            <button class="btn btn-primary" onclick="downloadReport()">Download Report</button>
+        </div>
+    </div>
+</section>
+
+
+<section id="developer" class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5 text-primary font-weight-bold">MEET THE MIND BEHIND THIS PROJECT</h2>
+        <div class="row align-items-center">
+            <div class="col-md-4 text-center mb-4 mb-md-0">
+                <img src="5e8bd4b9-2976-4314-a38a-b0de9d8c43f1.jpg" alt="Dhruv's Photo" class="img-fluid rounded-circle shadow-lg border border-primary">
+            </div>
+            <div class="col-md-8">
+                <h3 class="mb-4 text-dark font-weight-bold">Dhruv</h3>
+                <p class="lead text-muted mb-4">Hello! I’m Dhruv, a dedicated developer with a passion for creating exceptional digital experiences. My latest project is the <strong>Finincial hub</strong>, an advanced tool designed to enhance your financial management with its sophisticated features and user-centric design.</p>
+                <div class="bg-white p-4 rounded-lg shadow-sm">
+                    <h4 class="text-primary mb-3">Project Overview</h4>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><strong class="text-dark">Financial Hub:</strong> An all-encompassing financial management system including savings projections, debt repayment plans, retirement planners, and detailed expense analyses.</li>
+                        <li><strong class="text-dark">Features:</strong> Real-time data updates, interactive charts, an intuitive dashboard, and export functionalities.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+    <!-- Include Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+
+</html>
